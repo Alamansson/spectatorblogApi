@@ -24,17 +24,16 @@ class News(models.Model):
     )
 
     class Meta:
-        ordering = ['title', 'blog','category']
+        ordering = ['title', 'blog', 'category']
 
     def __str__(self):
         return self.title
 
 
-
 class NewsReview(models.Model):
     news = models.ForeignKey(News,
-                                on_delete=models.CASCADE,
-                                related_name='reviews')
+                             on_delete=models.CASCADE,
+                             related_name='reviews',)
     # author = models.ForeignKey(User, on_delete=models.CASCADE,
     #                            related_name='reviews', null=True)
 
