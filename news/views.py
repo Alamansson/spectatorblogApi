@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from rest_framework.viewsets import ModelViewSet
 from .models import News
-from .serializers import NewsReviewSerializer, NewsReview, NewsSerializer, NewsCreateSerializer
+from .serializers import NewsReviewSerializer, NewsReview, NewsSerializer, NewsCreateSerializer, NewsUpdateSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.decorators import action
@@ -19,6 +19,8 @@ from django.http import Http404
 
 class NewsViewSet(ModelViewSet):
     queryset = News.objects.all()
+    serializer = NewsSerializer
+
     filter_backends = [
         DjangoFilterBackend,
         SearchFilter,
@@ -50,6 +52,24 @@ class NewsViewSet(ModelViewSet):
             reviews, many=True
         )
         return Response(serializer.data, status=201)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = NewsUpdateSerializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.data
+        if data.get('title', False):
+            instance.title = data.get('title')
+
+        instance.save()
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
