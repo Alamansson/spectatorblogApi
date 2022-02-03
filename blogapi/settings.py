@@ -1,5 +1,8 @@
+import os
+
 from decouple import config
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -147,7 +150,17 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'media')    # i added it later
 
+STATICFILES_DIRS = [
+
+    os.path.join(BASE_DIR, 'static'),
+
+]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
+
+MEDIA_URL = '/image/'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

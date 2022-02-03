@@ -1,29 +1,24 @@
 from rest_framework import serializers
-from .models import News, NewsReview
+from .models import News, NewsReview, NewsLiked
 
 
 class NewsSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = News
         fields = '__all__'
+
 
 class NewsUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
         fields = ['title']
 
+
 class NewsCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
         fields = '__all__'
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['reviews'] = NewsReviewSerializer(
-            NewsReview.objects.filter(news=instance.id),
-            many=True
-        ).data
-        return representation
 
 
 class NewsReviewSerializer(serializers.ModelSerializer):
@@ -53,9 +48,31 @@ class NewsReviewSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user =self.context.get('request').user
-        validated_data['user'] = user
+        validated_data['name'] = user
         review = NewsReview.objects.create(**validated_data)
         return review
+
+
+class NewsLikedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsLiked
+        fields = "__all__"
+
+
+    def validate_news(self, news):
+        if self.Meta.model.objects.filter(news=news).exists():
+            self.Meta.model.objects.filter(news=news).delete()
+            raise serializers.ValidationError("Вы успешно сняли лайк")
+        return news
+
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        validated_data['user'] = user
+        like = NewsLiked.objects.create(**validated_data)
+        return like
+
+
+
 
 
 

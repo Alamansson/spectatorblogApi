@@ -1,5 +1,5 @@
 from django.db import models
-
+from account.models import User
 
 
 class News(models.Model):
@@ -12,7 +12,7 @@ class News(models.Model):
     title = models.CharField(max_length=50,
                              unique=True)
     blog = models.TextField()
-    image = models.ImageField(upload_to='image',
+    images = models.ImageField(upload_to='image',
                               null=True,
                               blank=True,)
 
@@ -30,12 +30,21 @@ class News(models.Model):
         return self.title
 
 
-class NewsReview(models.Model):
-    news = models.ForeignKey(News,
-                             on_delete=models.CASCADE,
-                             related_name='reviews',)
-    # author = models.ForeignKey(User, on_delete=models.CASCADE,
-    #                            related_name='reviews', null=True)
+class PostImage(models.Model):
+    post = models.ForeignKey(News, on_delete=models.CASCADE,
+                             related_name='pics')
+    image = models.ImageField(upload_to='posts')
 
+
+class NewsLiked(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='liked')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='liked',null=True,)
+
+
+class NewsReview(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='reviews',)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews', null=True)
     text = models.TextField()
     rating = models.PositiveIntegerField(default=1, null=True, blank=True)
+
+
