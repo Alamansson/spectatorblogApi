@@ -1,5 +1,8 @@
+import os
+
 from decouple import config
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,8 +30,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
     #DRM
     'rest_framework',
+
     'rest_framework.authtoken',
     'drf_yasg',
 
@@ -73,8 +78,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'blogapi.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 3,
+
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication'
+    ],
+}
 
 DATABASES = {
     'default': {
@@ -140,14 +154,17 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication'
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 3
-}
+STATIC_ROOT = os.path.join(BASE_DIR, 'media')    # i added it later
 
+STATICFILES_DIRS = [
+
+    os.path.join(BASE_DIR, 'static'),
+
+]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
+
+MEDIA_URL = '/image/'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
