@@ -7,6 +7,10 @@ class NewsSerializer(serializers.ModelSerializer):
         model = News
         fields = '__all__'
 
+class NewsUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
+        fields = ['title']
 
 class NewsCreateSerializer(serializers.ModelSerializer):
     class Meta:

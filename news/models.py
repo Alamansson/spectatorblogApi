@@ -4,9 +4,9 @@ from django.db import models
 
 class News(models.Model):
     NEWS_CATEGORY = [
-        ('SPRT', 'Спорт'),
-        ('BIZNESS', 'Бизнес'),
-        ('EDU', 'Образование'),
+        ('sport', 'Спорт'),
+        ('work', 'Бизнес'),
+        ('edu', 'Образование'),
     ]
 
     title = models.CharField(max_length=50,
