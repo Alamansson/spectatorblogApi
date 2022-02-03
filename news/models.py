@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from account.models import User
 
@@ -48,3 +49,10 @@ class NewsReview(models.Model):
     rating = models.PositiveIntegerField(default=1, null=True, blank=True)
 
 
+
+class Favorites(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='favorites')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='liked')
+
+    class Meta:
+        unique_together = ['news', 'user']
