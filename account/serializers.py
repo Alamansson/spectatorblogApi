@@ -1,18 +1,18 @@
 from django.contrib.auth import get_user_model, authenticate
-from django.core.mail import send_mail
+
 
 from rest_framework import serializers
 
 User = get_user_model()
 
 
-class RegistrationSerializer(serializers.Serializer):
+class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     name = serializers.CharField(required=False)
     password = serializers.CharField(required=True, min_length=6)
     password_confirmation = serializers.CharField(required=True, min_length=6)
 
-    def validate_email(selfself, email):
+    def validate_email(self, email):
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError('Адрес почты уже занят')
         return email
@@ -82,3 +82,4 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('Email и пароль обязательны')
         attrs['user'] = user
         return attrs
+

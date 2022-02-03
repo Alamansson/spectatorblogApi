@@ -4,14 +4,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import RegistrationSerializer, ActivationSerializer, LoginSerializer
+from .serializers import (RegisterSerializer, ActivationSerializer, LoginSerializer)
 
 
 
 class RegisterView(APIView):
     def post(self, request):
         data = request.data
-        serializer = RegistrationSerializer(data=data)
+        serializer = RegisterSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.create()
             message = f'Вы успешно зарегистрированы. ' \
@@ -30,3 +30,12 @@ class ActivationView(APIView):
 
 class LoginView(ObtainAuthToken):
     serializer_class = LoginSerializer
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        Token.pbjects.filter(user=user).delete()
+        return Response('Вы успешно разлогинились')
+
