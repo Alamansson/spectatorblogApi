@@ -31,10 +31,10 @@ class News(models.Model):
         return self.title
 
 
-class PostImage(models.Model):
-    post = models.ForeignKey(News, on_delete=models.CASCADE,
-                             related_name='pics')
-    image = models.ImageField(upload_to='posts')
+# class PostImage(models.Model):
+#     post = models.ForeignKey(News, on_delete=models.CASCADE,
+#                              related_name='pics')
+#     image = models.ImageField(upload_to='posts')
 
 
 class NewsLiked(models.Model):
@@ -48,11 +48,15 @@ class NewsReview(models.Model):
     text = models.TextField()
     rating = models.PositiveIntegerField(default=1, null=True, blank=True)
 
+    def __str__(self):
+        return [self.rating,self.text]
+
+    def __repr__(self):
+        return [self.rating,self.text]
 
 
-class Favorites(models.Model):
+class NewsFavourites(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='favorites')
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='liked')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites', null=True)
 
-    class Meta:
-        unique_together = ['news', 'user']
+
