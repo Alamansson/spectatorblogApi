@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
-from .models import News, NewsLiked
-from .serializers import NewsReviewSerializer, NewsReview, NewsSerializer, NewsCreateSerializer, NewsUpdateSerializer, NewsLikedSerializer
+from .models import News, NewsLiked, NewsFavourites
+from .serializers import NewsReviewSerializer, NewsReview, NewsSerializer, \
+    NewsCreateSerializer, NewsUpdateSerializer, NewsLikedSerializer, NewsFavouriteSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.decorators import action
@@ -15,6 +16,9 @@ from rest_framework.permissions import IsAdminUser
 class NewsViewSet(ModelViewSet):
     queryset = News.objects.all()
     serializer = NewsSerializer
+    permission_classes = [IsActivePermission]
+
+
 
     filter_backends = [
         DjangoFilterBackend,
@@ -79,3 +83,10 @@ class NewsReviewViewSet(ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         kwargs['context'] = self.get_serializer_context()
         return self.serializer_class(*args,**kwargs)
+
+
+class NewsFavouriteViewSet(ModelViewSet):
+    queryset = NewsFavourites.objects.all()
+    serializer_class = NewsFavouriteSerializer
+    permission_classes = [IsActivePermission]
+

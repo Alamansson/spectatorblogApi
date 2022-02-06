@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from .models import News, NewsReview, NewsLiked
+
+from account.permissions import IsActivePermission
+from .models import News, NewsReview, NewsLiked, NewsFavourites
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -32,23 +36,17 @@ class NewsReviewSerializer(serializers.ModelSerializer):
         title = news_review.news.title
         return title
 
-    def validate_news(self, news):
-        if self.Meta.model.objects.filter(news=news).exists():
-            raise serializers.ValidationError(
-                "Вы уже оставляли коммент на эту статью"
-            )
-        return news
-
     def validate_rating(self, rating):
         if rating not in range(1, 6):
             raise serializers.ValidationError(
                 "Рейтинг должен быть от 1 до 5"
             )
+        rating = (self.Meta.model().rating + rating)/2
         return rating
 
     def create(self, validated_data):
-        user =self.context.get('request').user
-        validated_data['name'] = user
+        user = self.context.get('request').user
+        validated_data['user'] = user
         review = NewsReview.objects.create(**validated_data)
         return review
 
@@ -58,11 +56,10 @@ class NewsLikedSerializer(serializers.ModelSerializer):
         model = NewsLiked
         fields = "__all__"
 
-
     def validate_news(self, news):
         if self.Meta.model.objects.filter(news=news).exists():
             self.Meta.model.objects.filter(news=news).delete()
-            raise serializers.ValidationError("Вы успешно сняли лайк")
+            raise serializers.ValidationError("Вы сняли лайк")
         return news
 
     def create(self, validated_data):
@@ -70,6 +67,26 @@ class NewsLikedSerializer(serializers.ModelSerializer):
         validated_data['user'] = user
         like = NewsLiked.objects.create(**validated_data)
         return like
+
+
+class NewsFavouriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsFavourites
+        fields = "__all__"
+
+    def validate_news(self, news):
+        if self.Meta.model.objects.filter(news=news).exists():
+            self.Meta.model.objects.filter(news=news).delete()
+            raise serializers.ValidationError("Вы убрали с избранного")
+        return news
+
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        validated_data['user'] = user
+        favourite = NewsFavourites.objects.create(**validated_data)
+        return favourite
+
+
 
 
 
